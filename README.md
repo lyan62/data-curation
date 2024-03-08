@@ -19,7 +19,7 @@ set up accordingly as in
 https://github.com/microsoft/unilm/tree/master/beit3
 
 ### Finetuning on COCO and Flickr30k with dynamic data curation
-Following instructions at [`get_started_for_image_captioning.md`](get_started/get_started_for_captioning.md) for downloading images of the datasets and preprocessing. 
+Following instructions at [`get_started_for_image_captioning.md`](https://github.com/microsoft/unilm/blob/master/beit3/get_started/get_started_for_captioning.md) for downloading images of the datasets and preprocessing. 
 
 We provide preprocessed annotations [here](https://drive.google.com/file/d/1sh96R3EulFDlxjvQjsB6dpSDXwJSotKd/view?usp=sharing).
 
