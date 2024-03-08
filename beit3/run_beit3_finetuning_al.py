@@ -206,7 +206,7 @@ def get_args():
     parser.add_argument("--curation_method", type=str, required=False, default=None, choices=["remove", "replaceCap", "replaceImg", "replace"])
     # parser.add_argument("--img_dir", type=str, required=False, default=None)
     parser.add_argument("--dynamic", action="store_true", required=False, default=False)
-    parser.add_argument("--augment_ratio", type=float, required=False, default=0.01)
+    parser.add_argument("--curation_ratio", type=float, required=False, default=0.01)
     parser.add_argument("--train_eval", action="store_true", required=False, default=False)
     parser.add_argument("--change_caption_by", type=str, required=False, default=None)
 
@@ -240,7 +240,7 @@ def get_top_loss_samples(train_result_file, args, img2path_dict):
         top_loss_samples = df[df["loss_val"] > (mean + 2*std)].to_dict('records')
         rest_samples = df[df["loss_val"] <= (mean + 2*std)].to_dict('records')
     else:
-        num_to_augment = round(len(sorted_train_results) * args.augment_ratio)
+        num_to_augment = round(len(sorted_train_results) * args.curation_ratio)
         top_loss_samples = sorted_train_results[:num_to_augment]
         rest_samples = sorted_train_results[num_to_augment:]
 
