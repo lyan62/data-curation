@@ -203,7 +203,7 @@ def get_args():
                         help='ZeRO optimizer stage (default: 0)')
     
     # parameters for data curation
-    parser.add_argument("--curation_method", type=str, required=False, default=None)
+    parser.add_argument("--curation_method", type=str, required=False, default=None, choices=["remove", "replaceCap", "replaceImg"])
     # parser.add_argument("--img_dir", type=str, required=False, default=None)
     parser.add_argument("--dynamic", action="store_true", required=False, default=False)
     parser.add_argument("--augment_ratio", type=float, required=False, default=0.01)
