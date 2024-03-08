@@ -1,7 +1,7 @@
 # Data-curation
 codebase for The Role of Data Curation in Image Captioning
 
-## Data curation with BEiT-3
+## Finetuning with dynamic data curation with BEiT-3
 
 [(BEiT-3) Image as a Foreign Language: BEiT Pretraining for Vision and Vision-Language Tasks](https://arxiv.org/abs/2208.10442)
 
@@ -31,6 +31,10 @@ You can use the `curation_method` and `curation_ratio` to config the curation pr
 
 *Dataset*:  
 `--task` is used to specify which dataset you will use --- `flickr30k_captioning` or `coco_captioning`
+
+
+## Finetuning with dynamic data curation with BLIP
+updating soon
 
 
 ## Citation
