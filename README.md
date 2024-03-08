@@ -19,13 +19,18 @@ set up accordingly as in
 https://github.com/microsoft/unilm/tree/master/beit3
 
 ### Finetuning on COCO and Flickr30k with dynamic data curation
-Following instructions at [`get_started_for_image_captioning.md`](get_started/get_started_for_captioning.md) for downloading datasets and preprocessing. 
+Following instructions at [`get_started_for_image_captioning.md`](get_started/get_started_for_captioning.md) for downloading images of the datasets and preprocessing. 
+
+We provide preprocessed annotations [here](https://drive.google.com/file/d/1sh96R3EulFDlxjvQjsB6dpSDXwJSotKd/view?usp=sharing).
 
 #### Finetuning with curation:
 We provide a sample bash file to finetune the BEiT3 model with dynamic data curation in `run/finetune_flickr_captioning_curation_tmp.sh`. 
 
-Curation methods and ratio: you can use the `curation_method` and `curation_ratio` to config the curation processs. `--dynamic` is for curating on samples with loss that are 2std away from the mean.
+*Curation methods and ratio*:   
+You can use the `curation_method` and `curation_ratio` to config the curation processs. `--dynamic` is for curating on samples with loss that are 2std away from the mean.
 
+*Dataset*:  
+`--task` is used to specify which dataset you will use --- `flickr30k_captioning` or `coco_captioning`
 
 
 ## Citation
