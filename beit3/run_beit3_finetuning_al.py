@@ -205,7 +205,7 @@ def get_args():
     # parameters for data curation
     parser.add_argument("--curation_method", type=str, required=False, default=None)
     # parser.add_argument("--img_dir", type=str, required=False, default=None)
-    parser.add_argument("--dynamic_aug", action="store_true", required=False, default=False)
+    parser.add_argument("--dynamic", action="store_true", required=False, default=False)
     parser.add_argument("--augment_ratio", type=float, required=False, default=0.01)
     parser.add_argument("--train_eval", action="store_true", required=False, default=False)
     parser.add_argument("--change_caption_by", type=str, required=False, default=None)
@@ -232,7 +232,7 @@ def get_top_loss_samples(train_result_file, args, img2path_dict):
         train_results = json.load(result_json)
     # select top train loss samples
     sorted_train_results = sorted(train_results, key=lambda x: x["loss_val"], reverse=True)
-    if args.dynamic_aug:
+    if args.dynamic:
         ## get top loss samples if loss value is 2std away from mean
         df = pd.DataFrame(train_results)
         print("total number of train eval examples: ", len(df))

@@ -9,7 +9,13 @@ codebase for The Role of Data Curation in Image Captioning
 We used the BEiT3-base model from the original unilm repo. We used the base size checkpoint---`BEiT3-base`: #layer=12; hidden=768; FFN factor=4x; #head=12; patch=16x16; #parameters: 276M => [download checkpoint](https://conversationhub.blob.core.windows.net/beit-share-public/beit3/pretraining/beit3_base_patch16_224.pth?sv=2021-10-04&st=2023-06-08T11%3A16%3A02Z&se=2033-06-09T11%3A16%3A00Z&sr=c&sp=r&sig=N4pfCVmSeq4L4tS8QbrFVsX6f6q844eft8xSuXdxU48%3D)
 
 ### Setup
-Set up accordingly as in 
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip3 install -r beit3/requirements.txt
+```
+
+or 
+set up accordingly as in 
 https://github.com/microsoft/unilm/tree/master/beit3
 
 ### Finetuning on COCO and Flickr30k with dynamic data curation
