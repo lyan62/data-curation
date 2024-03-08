@@ -203,7 +203,7 @@ def get_args():
                         help='ZeRO optimizer stage (default: 0)')
     
     # parameters for data curation
-    parser.add_argument("--curation_method", type=str, required=False, default=None, choices=["remove", "replaceCap", "replaceImg"])
+    parser.add_argument("--curation_method", type=str, required=False, default=None, choices=["remove", "replaceCap", "replaceImg", "replace"])
     # parser.add_argument("--img_dir", type=str, required=False, default=None)
     parser.add_argument("--dynamic", action="store_true", required=False, default=False)
     parser.add_argument("--augment_ratio", type=float, required=False, default=0.01)
@@ -378,14 +378,6 @@ def replaceImg_top_loss_samples(top_loss_samples, original_train_caption_dict, o
     print("replaced %d/%d images to sd images.. " % (cnter, len(replaced_samples)), len(top_loss_samples))
     return replaced_samples, origin2sd
 
-
-# def _write_curated_data_into_jsonl(items, jsonl_file, img2path_dict):
-#     with open(jsonl_file, mode="w", encoding="utf-8") as writer:
-#         for data in items:
-#             data["image_path"] = img2path_dict[data["image_id"]]
-#             writer.write(json.dumps(data, indent=None))
-#             writer.write('\n')
-#     print("Write %s with %d items !" % (jsonl_file, len(items)))
 
 def main(args, ds_init):
     utils.init_distributed_mode(args)
