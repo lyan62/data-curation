@@ -1,7 +1,7 @@
 # --------------------------------------------------------
-# Image as a Foreign Language: BEiT Pretraining for Vision and Vision-Language Tasks (https://arxiv.org/abs/2208.10442)
-# Github source: https://github.com/microsoft/unilm/tree/master/beit3
-# Copyright (c) 2023 Microsoft
+# The Role of Data Curation in Image Captioning (https://arxiv.org/abs/2305.03610)
+# Github source: https://github.com/lyan62/data-curation/tree/main/beit3
+# The code is modified based on https://github.com/microsoft/unilm/tree/master/beit3
 # Licensed under The MIT License [see LICENSE for details]
 # --------------------------------------------------------'
 
