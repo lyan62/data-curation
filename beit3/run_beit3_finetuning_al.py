@@ -257,26 +257,23 @@ def replace_top_loss_samples(top_loss_samples, train_caption_dict, original_trai
     """
     replaced_samples = []
     for sample in top_loss_samples:
-        if sample["source"] == "sd":
-            replaced_samples.append(sample)
-        else:
-            if sample["caption_id"] in train_caption_dict[sample["image_id"]]:
-                train_caption_dict[sample["image_id"]].pop(sample["caption_id"])
-            cand_caption_ids = list(train_caption_dict.get(sample["image_id"]).keys())
-            if len(cand_caption_ids) != 0:
-                rep_caption_id = random.choice(cand_caption_ids)
-                source = "aug"
-            else: 
-                rep_caption_id = sample["caption_id"]
-                source = "original"
-            replaced_samples.append({
-                "image_id": sample["image_id"],
-                "text_segment": original_train_caption_dict[sample["image_id"]][rep_caption_id]["text_segment"],
-                "source": source,
-                "caption_id": rep_caption_id,
-                "image_path": img2path_dict[sample["image_id"]],
-                "sample_id": sample["sample_id"]
-                })
+        if sample["caption_id"] in train_caption_dict[sample["image_id"]]:
+            train_caption_dict[sample["image_id"]].pop(sample["caption_id"])
+        cand_caption_ids = list(train_caption_dict.get(sample["image_id"]).keys())
+        if len(cand_caption_ids) != 0:
+            rep_caption_id = random.choice(cand_caption_ids)
+            source = "aug"
+        else: 
+            rep_caption_id = sample["caption_id"]
+            source = "original"
+        replaced_samples.append({
+            "image_id": sample["image_id"],
+            "text_segment": original_train_caption_dict[sample["image_id"]][rep_caption_id]["text_segment"],
+            "source": source,
+            "caption_id": rep_caption_id,
+            "image_path": img2path_dict[sample["image_id"]],
+            "sample_id": sample["sample_id"]
+            })
     return replaced_samples, train_caption_dict
 
 def lm_replace_top_loss_samples(top_loss_samples, lm_img_cap_dict):
@@ -419,15 +416,13 @@ def main(args, ds_init):
 
     # data_loader_train, data_loader_val = create_downstream_dataset(args)
     if not args.eval:
-        print("loading train caption dict..")
         data_loader_train, original_train_caption_dict, img2path_dict = create_dataset_by_split(args, split="train", is_train=True)
         with open(os.path.join(args.output_dir, "train_caption_dict.json"), "w") as output_caption_json:
             json.dump(original_train_caption_dict, output_caption_json, indent=2)
         train_caption_dict = deepcopy(original_train_caption_dict) # this is only used for getting meta data for eval train
         data_loader_val = create_dataset_by_split(args, split="val", is_train=False)
         print("loading additional data for curation..")
-        if "Img" in args.curation_method:
-            print("loading origin2sd mapping..")
+        if args.curation_method == "replaceImg":
             origin2sd = json.load(open(os.path.join(args.data_path, "%s_origin2sd_mapping.json" % args.task.split("_")[0]), "r"))
         if args.curation_method == "replace":
             print("load lm generated captions..")
@@ -570,7 +565,6 @@ def main(args, ds_init):
     print(f"Start training for {args.epochs} epochs")
     start_time = time.time()
 
-    
     max_accuracy = 0.0
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
@@ -653,8 +647,8 @@ def main(args, ds_init):
             caption_dict_by_loss = sort_caption_by_train_loss(train_result_file)
             replaced_samples, origin2sd = replaceImg_top_loss_samples(
                 top_loss_samples, original_train_caption_dict, origin2sd, caption_dict_by_loss, 
-                img2path_dict, change_caption_by=args.change_caption_by)
-            
+                img2path_dict, change_caption_by=args.change_caption_by
+                )
             new_samples = rest_samples + replaced_samples
             print("obtaining %d new samples" % len(new_samples))
 
@@ -665,50 +659,7 @@ def main(args, ds_init):
              # write new train data to file
             jsonl_file = os.path.join(args.output_dir, "captioning.train-curation-epoch%d.jsonl" % (epoch))
             utils.save_curated_data_into_jsonl(new_samples, jsonl_file, args.output_dir, args)
-            
-        elif args.curation_method == "remove_replaceImg":
-            caption_dict_by_loss = sort_caption_by_train_loss(train_result_file)
-            replaced_samples, origin2sd = replaceImg_top_loss_samples(
-                top_loss_samples[len(top_loss_samples)//2:], original_train_caption_dict, origin2sd, caption_dict_by_loss, 
-                img2path_dict, change_caption_by=args.change_caption_by)
-            
-            print("Get here!!!")
-            new_samples = rest_samples + replaced_samples
-            print("obtaining %d new samples" % len(new_samples))
 
-            # reinit data loader
-            data_loader_train = create_curated_train_dataset(args, new_samples, is_train=True)
-            print("reinit train data loader from %d new samples" % len(new_samples))
-
-             # write new train data to file
-            jsonl_file = os.path.join(args.output_dir, "captioning.train-curation-epoch%d.jsonl" % (epoch))
-            utils.save_curated_data_into_jsonl(new_samples, jsonl_file, args.output_dir, args)
-            
-        elif args.curation_method == "combined":
-            half_top = len(top_loss_samples) //2
-            
-            print("using combined curation method replaceCapImg..")
-            
-            # replaceCap
-            cap_replaced_samples, train_caption_dict = replace_top_loss_samples(top_loss_samples[:half_top], train_caption_dict, original_train_caption_dict, img2path_dict)
-            
-            # replaceImg
-            caption_dict_by_loss = sort_caption_by_train_loss(train_result_file)
-            img_replaced_samples, origin2sd = replaceImg_top_loss_samples(
-                top_loss_samples[half_top:], original_train_caption_dict, origin2sd, caption_dict_by_loss, 
-                img2path_dict, change_caption_by=args.change_caption_by)
-            
-            new_samples = rest_samples + cap_replaced_samples + img_replaced_samples
-            print("obtaining %d new samples" % len(new_samples))
-            
-            data_loader_train = create_curated_train_dataset(args, new_samples, is_train=True)
-            print("reinit train data loader from %d new samples" % len(new_samples))
-
-            # write new train data to file
-            jsonl_file = os.path.join(args.output_dir, "captioning.train-curation-epoch%d.jsonl" % (epoch))
-            utils.save_curated_data_into_jsonl(new_samples, jsonl_file, args.output_dir, args)
-
-            
 
         # eval on dev
         if data_loader_val is not None:
