@@ -1,5 +1,5 @@
 # Data-curation
-codebase for The Role of Data Curation in Image Captioning
+codebase for EACL 2024 paper [The Role of Data Curation in Image Captioning](https://arxiv.org/abs/2305.03610)
 
 ## Finetuning with dynamic data curation with BEiT-3
 
